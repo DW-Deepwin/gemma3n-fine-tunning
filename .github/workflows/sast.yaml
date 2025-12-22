@@ -12,6 +12,6 @@ on:
 
 jobs:
   security-scan:
-    uses: DW-Deepwin/deep-security/.github/workflows/sast-template.yaml@development
+    uses: DW-Deepwin/deep-security/.github/workflows/sast-template.yaml@main
 
 
