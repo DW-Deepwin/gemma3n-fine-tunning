@@ -1,0 +1,19 @@
+name: SAST Security Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  security-scan:
+    uses: DW-Deepwin/deep-security/.github/workflows/sast-template.yaml@development
+    # Opcional: passar caminhos a ignorar no scan
+    # with:
+    #   ignored_paths: "**/test/**,**/docs/**"
+
