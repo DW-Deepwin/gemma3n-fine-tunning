@@ -13,5 +13,5 @@ on:
 jobs:
   security-scan:
     uses: DW-Deepwin/deep-security/.github/workflows/sast-template.yaml@main
-
+    # Opcional: passar caminhos a ignorar no scan
 
