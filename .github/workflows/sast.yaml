@@ -1,5 +1,14 @@
 name: SAST Security Scan
 
+# SAST via Semgrep, consumindo o template reutilizável centralizado da organização
+# (DW-Deepwin/sbnia-security). Substitui a execução standalone do Horusec.
+#
+# Comportamento:
+#   - pull_request / push: job `sast` roda o scan completo (report, não bloqueia).
+#   - merge_group: job `sast-security-gate` roda antes do merge (bloqueia por
+#     findings acima de fail_on_severity). Requer Merge Queue habilitado no
+#     branch protection.
+
 on:
   pull_request:
     branches:
@@ -9,36 +18,8 @@ on:
     branches:
       - main
       - development
+  merge_group:
 
 jobs:
   sast:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Horusec Full Scan
-        run: |
-          mkdir -p reports
-          docker run --rm \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v $(pwd):/src/horusec \
-            horuszup/horusec-cli:v2.9.0-beta.3 \
-            horusec start \
-            -p /src/horusec -P $(pwd) \
-            -o="json" \
-            -O="/src/horusec/reports/horusec_report.json"
-
-      - name: Generate Markdown Report
-        run: |
-          cd reports
-          curl -sL https://raw.githubusercontent.com/0xtiago/opensource-devsecops/main/tools/horusec/horusec_json2md/horusec_json2md.py -o horusec_json2md.py
-          python3 horusec_json2md.py horusec_report.json horusec_report.md
-
-      - name: Upload Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: horusec-reports
-          path: reports/
-
-      - name: Show Report in Summary
-        run: cat reports/horusec_report.md >> $GITHUB_STEP_SUMMARY
+    uses: DW-Deepwin/sbnia-security/.github/workflows/sast-template.yaml@main
